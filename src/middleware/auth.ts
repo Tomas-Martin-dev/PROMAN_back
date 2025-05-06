@@ -16,16 +16,15 @@ dontenv.config();
 export const authenticate = async (req: Request, res: Response, next: NextFunction) => {
     const bearer = req.headers.authorization
     if(!bearer) {
+        console.log("aca en error", bearer);
         const error = new Error('No Autorizado')
         res.status(401).json({error: error.message})
+        return
     }
-
-    const [, token] = bearer.split(' ')
     
+    const [, token] = bearer.split(' ')
     try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET)
-        console.log(decoded);
-        
+        const decoded = jwt.verify(token, process.env.JWT_SECRET)        
         if(typeof decoded === 'object' && decoded.id) {
             const user = await User.findById(decoded.id).select('_id name email')
             if(user) {
@@ -36,6 +35,7 @@ export const authenticate = async (req: Request, res: Response, next: NextFuncti
             }
         }
     } catch (error) {
+        console.log(error);
         res.status(500).json({error: 'Token No Válido'})
     }
 

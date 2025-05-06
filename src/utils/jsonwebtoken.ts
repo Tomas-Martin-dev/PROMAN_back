@@ -14,7 +14,7 @@ export const generateJWT = (payload : UserPaylod)=> {
         throw new Error("ENV unde")
     }    
     const token = jwt.sign(payload, secret, {
-        expiresIn: "6m"
+        expiresIn: "1d"
     });
     return token
 }

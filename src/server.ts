@@ -26,6 +26,6 @@ app.use(express.json())
 
 // Routes
 app.use("/api/auth", authRouter)
-// app.use("/api/projects", router)
+app.use("/api/projects", router)
 
 export default app
