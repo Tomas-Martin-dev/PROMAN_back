@@ -17,6 +17,8 @@ export class teamController {
         }
     };
     static addMemberById = async (req: Request, res: Response) => {
+        console.log(req.body);
+        
         const {id} = req.body;
         try {
             const user = await User.findById(id);
@@ -36,13 +38,13 @@ export class teamController {
         }
     };
     static deleteMemberById = async (req: Request, res: Response) => {
-        const {id} = req.body;
+        const {memberId} = req.params;
         try {
-            if (!req.project.team.some(team => team.toString() === id.toString())) {
+            if (!req.project.team.some(team => team.toString() === memberId)) {
                 res.status(404).json({ errors: "Usuario no se ecuentra asignado al proyecto" });
                 return
             }
-            req.project.team = req.project.team.filter(teamMember => teamMember.toString() !== id);
+            req.project.team = req.project.team.filter(teamMember => teamMember.toString() !== memberId);
             await req.project.save();
             res.send("Usuario eliminado del proyecto")
         } catch (error) {
