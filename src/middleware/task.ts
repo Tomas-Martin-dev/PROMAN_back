@@ -27,7 +27,15 @@ export async function validateTask(req: Request, res: Response, next: NextFuncti
 
 export async function validateTasktoProject(req: Request, res: Response, next: NextFunction) {
     if (req.task.project.toString() !== req.project.id) {
-        res.status(400).json({ errors: "Accion no valida! Projecto no validado para su tarea" });
+        res.status(400).json({ errors: "Accion no valida - No tienes permisos" });
+        return
+    }
+    next()
+}
+
+export async function hasAuthorization(req: Request, res: Response, next: NextFunction) {
+    if (req.user.id.toString() !== req.project.manager.toString()) {
+        res.status(400).json({ errors: "Accion no valida - No tienes permisos" });
         return
     }
     next()
