@@ -220,4 +220,57 @@ export class AuthController {
     static user = async (req:Request, res:Response) => {
         res.json(req.user)
     };
+
+    static updateProfile = async (req:Request, res:Response) => {
+        const { name, email} = req.body;
+        const userExist = await User.findOne({email});
+        if (userExist && userExist.id.toString() !== req.user.id.toString()) {
+            const error = new Error("Email ocupado");
+            res.status(409).json({errors: error.message});
+            return
+        }
+        
+        req.user.name = name;
+        req.user.email = email;
+        try {
+            await req.user.save()
+            res.send("Datos actualizados")   
+        } catch (error) {
+            res.status(500).json({error: "Hubo un error"})
+        }
+    };
+
+    static updatePassword = async (req:Request, res:Response) => {
+        const { current_password, password} = req.body;
+        
+        const user = await User.findById(req.user.id);
+        const isPasswordCorrect = await validPassHash(current_password, user.password);
+        
+        if (!isPasswordCorrect) {
+            const error = new Error("El password actual es incorrecto");
+            res.status(401).json({errors: error.message});
+            return
+        }
+        
+        user.password =  await hashPass(password)
+        try {
+            await user.save()
+            res.send("Password Actualizado")   
+        } catch (error) {
+            res.status(500).json({error: "Hubo un error"})
+        }
+    };
+
+    static checkPassword = async (req:Request, res:Response) => {
+        const { password } = req.body;
+        const user = await User.findById(req.user.id);
+        
+        const isPasswordCorrect = await validPassHash(password, user.password);
+        if (!isPasswordCorrect) {
+            const error = new Error("El password es incorrecto");
+            res.status(401).json({errors: error.message});
+            return
+        }
+        res.send("Password correcto")
+    }
 }

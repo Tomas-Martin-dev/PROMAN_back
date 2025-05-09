@@ -1,4 +1,4 @@
-import {Router} from "express"
+import { Router } from "express"
 import { AuthController } from "../controllers/AuthController";
 import { body, param } from "express-validator";
 import { handleInputsErros } from "../middleware/validation";
@@ -10,8 +10,8 @@ const router = Router();
 router.post("/create-account",
     body("name").notEmpty().withMessage("El nombre no puede ir vacio"),
     body("email").isEmail().withMessage("Email no valido"),
-    body("password").isLength({min: 8}).withMessage("Minimo 8 caracteres"),
-    body("password_confirmation").custom((value, {req})=> {
+    body("password").isLength({ min: 8 }).withMessage("Minimo 8 caracteres"),
+    body("password_confirmation").custom((value, { req }) => {
         if (value !== req.body.password) {
             throw new Error("Los Passwords no son iguales");
         }
@@ -25,7 +25,7 @@ router.post("/confirm-account",
     body("token").notEmpty().withMessage("El token no puede ir vacio"),
     handleInputsErros,
     AuthController.confirmToken
-) 
+)
 
 //ruteo validando cuenta confirmada
 router.post("/login",
@@ -55,8 +55,8 @@ router.post("/validat-token",
 
 router.post("/update-password/:token",
     param("token").isNumeric().withMessage("Token no valido"),
-    body("password").isLength({min: 8}).withMessage("Minimo 8 caracteres"),
-    body("password_confirmation").custom((value, {req})=> {
+    body("password").isLength({ min: 8 }).withMessage("Minimo 8 caracteres"),
+    body("password_confirmation").custom((value, { req }) => {
         if (value !== req.body.password) {
             throw new Error("Los Passwords no son iguales");
         }
@@ -68,4 +68,30 @@ router.post("/update-password/:token",
 
 router.get("/user", authenticate, AuthController.user)
 
+// Profile Routes
+router.put("/profile", authenticate,
+    body("name").notEmpty().withMessage("El nombre no puede ir vacio"),
+    body("email").isEmail().withMessage("Email no valido"),
+    handleInputsErros,
+    AuthController.updateProfile
+)
+
+router.post("/profile/changePass", authenticate,
+    body("current_password").notEmpty().withMessage("El Password no puede ir vacio"),
+    body("password").isLength({ min: 8 }).withMessage("Minimo 8 caracteres"),
+    body("password_confirmation").custom((value, { req }) => {
+        if (value !== req.body.password) {
+            throw new Error("Los Passwords no son iguales");
+        }
+        return true
+    }),
+    handleInputsErros,
+    AuthController.updatePassword
+)
+
+router.post("/check-password", authenticate,
+    body("password").notEmpty().withMessage("El Password no puede ir vacio"),
+    handleInputsErros,
+    AuthController.checkPassword
+)
 export default router
