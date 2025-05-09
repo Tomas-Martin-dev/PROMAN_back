@@ -1,6 +1,7 @@
 import mongoose, {Schema, Document, PopulatedDoc, Types} from "mongoose";
-import { ITask } from "./Task";
+import Task, { ITask } from "./Task";
 import { IUser } from "./Auth";
+import Notes from "./Notes";
 
 export interface IProject extends Document {
     projectName: string
@@ -44,6 +45,18 @@ const ProjectSchema: Schema = new Schema({
         }
     ],
 }, {timestamps: true})
+
+// Middlreware para eliminar las tareas que pertenezcan a un proyecto que se elimine
+ProjectSchema.pre("deleteOne",{document: true}, async function() {
+    const idP = this.id;
+    if (!idP) return
+
+    const tasks = await Task.find({project: idP})
+    for (const task of tasks) {
+        await Notes.deleteMany({task: task.id})
+    }
+    await Task.deleteMany({project: idP})
+})
 
 const Project = mongoose.model<IProject>("Project", ProjectSchema);
 export default Project

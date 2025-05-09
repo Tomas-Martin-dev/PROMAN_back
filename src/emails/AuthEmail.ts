@@ -1,14 +1,25 @@
-import { transport } from "../config/nodemailer";
+import nodemailer from "nodemailer";
 
 interface IEmail {
     email: string
     name: string
-    token: string
+    token?: string
+    projectName?: string
+    project_id?: string
+    managerName?: string
 }
 
+const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+        user: process.env.USER_GMAIL,
+        pass: process.env.PASS_GMAIL
+    },
+});
+
 export class AuthEmail {
-    static sendConfirmedEmail = async ( user: IEmail ) => {
-        await transport.sendMail({
+    static sendConfirmedEmail = async (user: IEmail) => {
+        await transporter.sendMail({
             from: "UpTask <admin@uptask.com>",
             to: user.email,
             subject: "UpTask - Confirmar tu cuenta",
@@ -22,7 +33,7 @@ export class AuthEmail {
         })
     };
     static sendNewToken = async (user: IEmail) => {
-        await transport.sendMail({
+        await transporter.sendMail({
             from: "UpTask <admin@uptask.com>",
             to: user.email,
             subject: "UpTask - Valida tu Cuenta",
@@ -35,16 +46,28 @@ export class AuthEmail {
         })
     };
     static sendNewPassword = async (user: IEmail) => {
-        await transport.sendMail({
+        await transporter.sendMail({
             from: "UpTask <admin@uptask.com>",
             to: user.email,
             subject: "UpTask - Recupera tu Cuenta",
             text: "UpTask - Recupera tu Cuenta",
             html: `<p>Hola: ${user.name}</p>
-            <p>Haz olvidado tu Password en Pro-Manager, te hemos generado un nuevo token para que puedas generar un nuevo</p>
+            <p>Haz olvidado tu Password en Pro-Manager, te hemos generado un nuevo token para que puedas restablecer tu Password</p>
             <p>El codigo que tienes que usar es: <b>${user.token}</b></p>
             <a href="http://localhost:5173/auth/new-password">!Restablece tu Password!</a>,
             <p>RAPIDO!! - solo tienes 10 minutos</p>`
+        })
+    };
+    static sendAddMember = async (user: IEmail) => {
+        await transporter.sendMail({
+            from: "UpTask <admin@uptask.com>",
+            to: user.email,
+            subject: `UpTask - ${user.managerName} te asignado a un proyecto`,
+            text: "UpTask - Fuiste Asignado a un Proyecto",
+            html: `<p>Hola: ${user.name}</p>
+            <p>El Manager de ${user.projectName}: <b>${user.managerName}</b> te acaban de asignar al proyecto</p>
+            <p>¡Ya puedes comenzar a trabajar en el!</p>
+            <a href="http://localhost:5173/projects/${user.project_id}">${user.projectName}</a>`
         })
     };
 }

@@ -77,19 +77,8 @@ export class AuthController {
                 res.status(401).json({error: error.message});
                 return
             }
-            //Valido que este confirmado sino mando corre
+            //Valido que este confirmado
             if (!user.confirmed) {
-                const token = new Token();
-                token.user = user.id;
-                token.token = generateToken();
-                await token.save()
-
-                AuthEmail.sendNewToken({
-                    email: user.email,
-                    name: user.name,
-                    token: token.token
-                })
-
                 const error = new Error("Usuario no confirmado - Revisa tu Email");
                 res.status(401).json({error: error.message});
                 return

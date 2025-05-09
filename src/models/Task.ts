@@ -1,4 +1,5 @@
 import mongoose, {Schema, Document, Types} from "mongoose";
+import Notes from "./Notes";
 
 const taskStatus = {
     PENDING: "pending",
@@ -63,6 +64,13 @@ export const TaskSchema: Schema =  new Schema({
         }
     ]
 }, { timestamps: true })
+
+// Middlreware para eliminar las notas que pertenezcan a una tarea que se elimine
+TaskSchema.pre("deleteOne", {document: true}, async function() {
+    const id = this._id;
+    if (!id) return
+    await Notes.deleteMany({task: id})
+})
 
 const Task = mongoose.model<ITask>("Task", TaskSchema);
 export default Task

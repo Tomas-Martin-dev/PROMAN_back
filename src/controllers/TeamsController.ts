@@ -1,6 +1,7 @@
 import type { Request, Response } from "express"
 import User from "../models/Auth";
 import Project from "../models/Project";
+import { AuthEmail } from "../emails/AuthEmail";
 
 export class teamController {
     static postTeamByEmail = async (req: Request, res: Response) => {
@@ -17,9 +18,9 @@ export class teamController {
         }
     };
     static addMemberById = async (req: Request, res: Response) => {
-        console.log(req.body);
-        
         const {id} = req.body;
+        console.log(req.user);
+        
         try {
             const user = await User.findById(id);
             if (!user) {
@@ -30,9 +31,21 @@ export class teamController {
                 res.status(404).json({ errors: "Usuario ya se ecuentra asignado al proyecto" });
                 return
             }
+            if (user.id === req.user.id) {
+                res.status(404).json({ errors: "Error - Eres el Manager" });
+                return
+            }
             req.project.team.push(user.id);
             await req.project.save();
-            res.send("Usuario asignado al projecto")
+            //Envio correo de aviso al nuevo miembro
+            AuthEmail.sendAddMember({
+                name: user.name,
+                email: user.email,
+                projectName: req.project.projectName,
+                project_id: req.project.id,
+                managerName: req.user.name
+            })
+            res.send("Usuario asignado al proyecto")
         } catch (error) {
             console.log(error);
         }
