@@ -27,7 +27,7 @@ export class AuthEmail {
             html: `<p>Hola: ${user.name}</p>
             <p>Haz creado tu cuenta en Pro-Manager, solo tienes que validarla y ya podras ingresar</p>
             <p>El codigo que tienes que usar es: <b>${user.token}</b></p>
-            <a href="http://localhost:5173/auth/comfirm-account">¡Confirma tu Cuenta!</a>,
+            <a href="https://proman-front.vercel.app/auth/comfirm-account">¡Confirma tu Cuenta!</a>,
             <p>Tienes 10 minutos para validar tu cuenta</p>
             <p>Si no solicitaste ninguna cuenta en Pro-Manager. Ignora este mansaje</p>`
         })
@@ -41,7 +41,7 @@ export class AuthEmail {
             html: `<p>Hola: ${user.name}</p>
             <p>No haz validado tu cuenta en Pro-Manager, te hemos generado un nuevo token para que puedas ingresar</p>
             <p>El codigo que tienes que usar es: <b>${user.token}</b></p>
-            <a href="http://localhost:5173/auth/comfirm-account">Valida tu Cuenta!</a>,
+            <a href="https://proman-front.vercel.app/auth/comfirm-account">Valida tu Cuenta!</a>,
             <p>RAPIDO!! - solo tienes 10 minutos</p>`
         })
     };
@@ -54,7 +54,7 @@ export class AuthEmail {
             html: `<p>Hola: ${user.name}</p>
             <p>Haz olvidado tu Password en Pro-Manager, te hemos generado un nuevo token para que puedas restablecer tu Password</p>
             <p>El codigo que tienes que usar es: <b>${user.token}</b></p>
-            <a href="http://localhost:5173/auth/new-password">!Restablece tu Password!</a>,
+            <a href="https://proman-front.vercel.app/auth/new-password">!Restablece tu Password!</a>,
             <p>RAPIDO!! - solo tienes 10 minutos</p>`
         })
     };
@@ -67,7 +67,7 @@ export class AuthEmail {
             html: `<p>Hola: ${user.name}</p>
             <p>El Manager de ${user.projectName}: <b>${user.managerName}</b> te acaban de asignar al proyecto</p>
             <p>¡Ya puedes comenzar a trabajar en el!</p>
-            <a href="http://localhost:5173/projects/${user.project_id}">${user.projectName}</a>`
+            <a href="https://proman-front.vercel.app/projects/${user.project_id}">${user.projectName}</a>`
         })
     };
 }
