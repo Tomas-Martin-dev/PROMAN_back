@@ -13,7 +13,10 @@ RUN npm install
 # Copiar el resto del código al contenedor
 COPY . .
 
-# Exponer el puerto (ajústalo si tu app usa otro)
+# 🔧 Compilar TypeScript
+RUN npm run build
+
+# Exponer el puerto
 EXPOSE 3000
 
 # Comando para iniciar la app
