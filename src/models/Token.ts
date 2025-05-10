@@ -1,4 +1,4 @@
-import mongoose, {Schema, Document, mongo, Types, Date} from "mongoose"
+import mongoose, { Schema, Document, Types, Date } from "mongoose"
 
 export interface IToken extends Document {
     token: string
@@ -6,21 +6,23 @@ export interface IToken extends Document {
     createAt: Date
 }
 
-const tokenSchemma : Schema =  new Schema({
+const tokenSchemma: Schema = new Schema({
     token: {
         type: String,
-        require: true
+        required: true,
+        trim: true
     },
     user: {
         type: Types.ObjectId,
-        require: "User"
+        ref: "User",
+        required: true
     },
     expiresAt: {
         type: Date,
-        default: Date.now(),
+        default: Date.now,
         expires: "10d"
     }
-})
+}, { timestamps: true })
 
 const token = mongoose.model<IToken>("Token", tokenSchemma);
 export default token
